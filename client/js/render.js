@@ -11,6 +11,7 @@ const condensed = require("./condensed");
 const JoinChannel = require("./join-channel");
 const helpers_parse = require("./libs/handlebars/parse");
 const Userlist = require("./userlist");
+const storage = require("./localStorage");
 
 const chat = $("#chat");
 const sidebar = $("#sidebar");
@@ -195,12 +196,21 @@ function renderChannelUsers(data) {
 }
 
 function renderNetworks(data, singleNetwork) {
+	const collapsed = JSON.parse(storage.get("thelounge.networks.collapsed")) || {};
+
 	sidebar.find(".empty").hide();
 	sidebar.find(".networks").append(
 		templates.network({
 			networks: data.networks,
 		})
 	);
+
+	Object.keys(collapsed)
+		.forEach((key) => {
+			if (collapsed[key]) {
+				collapseNetwork($(`.network[data-uuid=${key}] button.collapse-network`));
+			}
+		});
 
 	// Add keyboard handlers to the "Join a channel…" form inputs/button
 	JoinChannel.handleKeybinds();
@@ -305,18 +315,24 @@ function loadMoreHistory(entries) {
 	});
 }
 
-sidebar.on("click", ".collapse-network", (e) => {
-	const collapseButton = $(e.target);
+sidebar.on("click", "button.collapse-network", (e) => collapseNetwork($(e.target)));
 
+function collapseNetwork(target) {
+	const collapseButton = target.closest(".collapse-network");
+	const networks = JSON.parse(storage.get("thelounge.networks.collapsed")) || {};
+	const networkuuid = collapseButton.closest(".network").attr("data-uuid");
 	collapseButton.closest(".network").toggleClass("collapsed");
 
 	if (collapseButton.attr("aria-expanded") === "true") {
 		collapseButton.attr("aria-expanded", false);
 		collapseButton.attr("aria-label", "Expand");
+		networks[networkuuid] = true;
 	} else {
 		collapseButton.attr("aria-expanded", true);
 		collapseButton.attr("aria-label", "Collapse");
+		networks[networkuuid] = false;
 	}
 
+	storage.set("thelounge.networks.collapsed", JSON.stringify(networks));
 	return false;
-});
+}
