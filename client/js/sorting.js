@@ -17,18 +17,15 @@ module.exports = function() {
 		forcePlaceholderSize: true,
 		tolerance: "pointer", // Use the pointer to figure out where the network is in the list
 
-		update: function() {
+		update() {
+			const type = "networks";
 			const order = [];
+
 			sidebar.find(".network").each(function() {
 				const id = $(this).data("id");
 				order.push(id);
 			});
-			socket.emit(
-				"sort", {
-					type: "networks",
-					order: order,
-				}
-			);
+			socket.emit("sort", {type, order});
 
 			options.settings.ignoreSortSync = true;
 		},
@@ -43,20 +40,17 @@ module.exports = function() {
 		forcePlaceholderSize: true,
 		tolerance: "pointer", // Use the pointer to figure out where the channel is in the list
 
-		update: function(e, ui) {
+		update(e, ui) {
+			const type = "channels";
 			const order = [];
 			const network = ui.item.parent();
+			const target = network.data("id");
+
 			network.find(".chan").each(function() {
 				const id = $(this).data("id");
 				order.push(id);
 			});
-			socket.emit(
-				"sort", {
-					type: "channels",
-					target: network.data("id"),
-					order: order,
-				}
-			);
+			socket.emit("sort", {type, target, order});
 
 			options.settings.ignoreSortSync = true;
 		},

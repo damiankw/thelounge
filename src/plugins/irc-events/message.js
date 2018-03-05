@@ -91,9 +91,9 @@ module.exports = function(irc, network) {
 			type: data.type,
 			time: data.time,
 			text: data.message,
-			self: self,
-			from: from,
-			highlight: highlight,
+			self,
+			from,
+			highlight,
 			users: [],
 		});
 
@@ -148,8 +148,8 @@ module.exports = function(irc, network) {
 				type: "notification",
 				chanId: chan.id,
 				timestamp: data.time || Date.now(),
-				title: title,
-				body: body,
+				title,
+				body,
 			}, true);
 		}
 	}
