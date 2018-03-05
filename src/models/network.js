@@ -128,6 +128,22 @@ Network.prototype.getNetworkStatus = function() {
 	return status;
 };
 
+Network.prototype.addChannel = function(newChan) {
+	let index = this.channels.length - 1;
+
+	// Don't sort special channels in amongst channels/users.
+	if (newChan.type === Chan.Type.CHANNEL || newChan.type === Chan.Type.QUERY) {
+		for (let i = 0; i < this.channels.length; i++) {
+			if (newChan.name < this.channels[i].name) {
+				index = i;
+			}
+		}
+	}
+
+	this.channels.splice(index, 0, newChan);
+	return index;
+};
+
 Network.prototype.export = function() {
 	const network = _.pick(this, [
 		"uuid",
