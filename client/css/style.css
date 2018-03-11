@@ -1558,7 +1558,7 @@ part/quit messages where we don't load previews (adds a blank line otherwise) */
 	flex-grow: 0;
 }
 
-.loading-logo-dark {
+.logo-dark {
 	display: none;
 }
 
